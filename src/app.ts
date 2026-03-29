@@ -20,8 +20,8 @@ app.use(
 );
 
 // import routes
-import healtcheckRoutes from "./routes/healthcheck.routes.js";
-app.use("/api/v1/healthcheck", healtcheckRoutes);
+import healthcheckRouter from "./routes/healthcheck.routes.js";
+app.use("/api/v1/healthcheck", healthcheckRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
