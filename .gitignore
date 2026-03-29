@@ -1,2 +1,30 @@
+# Environment
 .env
-.node_modules
+.env.local
+.env.development
+.env.production
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# Coverage & testing
+coverage
