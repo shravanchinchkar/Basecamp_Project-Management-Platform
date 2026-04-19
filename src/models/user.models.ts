@@ -1,7 +1,25 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document, CallbackError } from "mongoose";
+import bcrypt from "bcrypt";
 
-const userSchema = new Schema(
-    // Following are the bits that will be stored in the db
+// 1. Define an interface for the User document
+export interface IUser extends Document {
+  avatar: {
+    url: string;
+    localPath: string;
+  };
+  username: string;
+  email: string;
+  fullname?: string;
+  password: string;
+  isEmailVerified: boolean;
+  refreshToken?: string;
+  forgotPasswordToken?: string;
+  forgotPasswordExpiry?: Date;
+  emailVerificationToken?: string;
+  emailVerificationExpiry?: Date;
+}
+
+const userSchema = new Schema<IUser>(
   {
     avatar: {
       type: {
@@ -9,10 +27,8 @@ const userSchema = new Schema(
         localPath: String,
       },
       default: {
-        type: {
-          url: `https://placehold.co/200x200`,
-          localPath: "",
-        },
+        url: "https://placehold.co/200x200",
+        localPath: "",
       },
     },
     username: {
@@ -42,25 +58,20 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    refreshToken: {
-      type: String,
-    },
-    forgotPasswordToken: {
-      type: String,
-    },
-    forgotPasswordExpiry: {
-      type: Date,
-    },
-    emailVerificationToken: {
-      type: String,
-    },
-    emailVerificationExpiry: {
-      type: Date,
-    },
+    refreshToken: { type: String },
+    forgotPasswordToken: { type: String },
+    forgotPasswordExpiry: { type: Date },
+    emailVerificationToken: { type: String },
+    emailVerificationExpiry: { type: Date },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-export const user = mongoose.model("User", userSchema);
+// 2. Type `this` explicitly as IUser in the pre-save hook
+userSchema.pre<IUser>("save", async function (this: IUser) {
+  if (!this.isModified("password")) return;
+
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
+export const User = mongoose.model<IUser>("User", userSchema);
