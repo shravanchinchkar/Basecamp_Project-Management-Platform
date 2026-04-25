@@ -74,4 +74,8 @@ userSchema.pre<IUser>("save", async function (this: IUser) {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
+userSchema.methods.isPasswordCorrect = async function(password:any){
+  return await bcrypt.compare(password,this.password);
+}
+
 export const User = mongoose.model<IUser>("User", userSchema);
