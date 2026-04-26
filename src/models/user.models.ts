@@ -3,6 +3,33 @@ import bcrypt from "bcrypt";
 import jwt, { SignOptions } from "jsonwebtoken";
 import crypto from "crypto";
 
+export interface IUser extends Document {
+  avatar: {
+    url: string;
+    localPath: string;
+  };
+  username: string;
+  email: string;
+  fullname?: string;
+  password: string;
+  isEmailVerified: boolean;
+  refreshToken?: string;
+  forgotPasswordToken?: string;
+  forgotPasswordExpiry?: Date;
+  emailVerificationToken?: string;
+  emailVerificationExpiry?: Date;
+
+  // ← Add these method signatures
+  isPasswordCorrect(password: string): Promise<boolean>;
+  generateAccessToken(): string;
+  generateRefereshToken(): string;
+  generateTemperoryToken(): {
+  unHashedToken: string;
+  hashToken: string;
+  tokenExpiry: Date; // ← change number to Date
+};
+}
+
 // 1. Define an interface for the User document
 export interface IUser extends Document {
   avatar: {
@@ -118,10 +145,9 @@ userSchema.methods.generateTemperoryToken = function () {
     .update(unHashedToken)
     .digest("hex");
 
-  const tokenExpiry = Date.now() + 20 * 60 * 1000; // 20 min
+  const tokenExpiry = new Date(Date.now() + 20 * 60 * 1000); // ← wrap in new Date()
 
-  return {unHashedToken,hashToken,tokenExpiry};
-  
+  return { unHashedToken, hashToken, tokenExpiry };
 };
 
 export const User = mongoose.model<IUser>("User", userSchema);
