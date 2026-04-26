@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document, CallbackError } from "mongoose";
 import bcrypt from "bcrypt";
+import jwt, { SignOptions } from "jsonwebtoken";
+import crypto from "crypto";
 
 // 1. Define an interface for the User document
 export interface IUser extends Document {
@@ -74,8 +76,52 @@ userSchema.pre<IUser>("save", async function (this: IUser) {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-userSchema.methods.isPasswordCorrect = async function(password:any){
-  return await bcrypt.compare(password,this.password);
-}
+userSchema.methods.isPasswordCorrect = async function (password: any) {
+  return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.generateAccessToken = function () {
+  const options: SignOptions = {
+    expiresIn: (process.env.ACCESS_TOKEN_EXPIRY ||
+      "1d") as SignOptions["expiresIn"],
+  };
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+    },
+    process.env.ACCESS_TOKEN_SECRET!,
+    options,
+  );
+};
+
+userSchema.methods.generateRefereshToken = function () {
+  const options: SignOptions = {
+    expiresIn: (process.env.REFERESH_TOKEN_EXPIRY ||
+      "1d") as SignOptions["expiresIn"],
+  };
+
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFERESH_TOKEN_SECRET!,
+    options,
+  );
+};
+
+userSchema.methods.generateTemperoryToken = function () {
+  const unHashedToken = crypto.randomBytes(20).toString("hex");
+  const hashToken = crypto
+    .createHash("sha256")
+    .update(unHashedToken)
+    .digest("hex");
+
+  const tokenExpiry = Date.now() + 20 * 60 * 1000; // 20 min
+
+  return {unHashedToken,hashToken,tokenExpiry};
+  
+};
 
 export const User = mongoose.model<IUser>("User", userSchema);
