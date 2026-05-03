@@ -1,11 +1,9 @@
 import { Router } from "express";
-import {registerUser} from "../controllers/auth.controller";
+import {healthCheck} from "../controllers/healthcheck.controller.js"
 
 
-const authRouter = Router();
+const healthCheckRouter = Router();
 
-authRouter.route("/register").post(registerUser)
+healthCheckRouter.route("/").get(healthCheck)
 
-
-
-export default authRouter;
+export default healthCheckRouter;
