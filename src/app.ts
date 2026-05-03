@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -8,6 +8,7 @@ const app = express();
 app.use(express.json({ limit: "16kb" })); // this allows the frontend to pass the data to the backend in the json format, and it can pass max 16kb of data
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
+app.use(cookieParser());
 
 //cors configurations
 app.use(
@@ -25,7 +26,6 @@ import authRouter from "./routes/auth.routes.js";
 
 app.use("/api/v1/healthcheck", healthcheckRouter);
 app.use("/api/v1/auth", authRouter);
-
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
