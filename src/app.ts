@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { Request, Response, NextFunction } from "express";
 
 const app = express();
 
@@ -29,6 +30,15 @@ app.use("/api/v1/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
+});
+
+// Add this at the bottom before export
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error("GLOBAL ERROR:", err?.message);
+  console.error("STACK:", err?.stack);
+  res.status(err?.statusCode || 500).json({
+    message: err?.message || "Something went wrong",
+  });
 });
 
 export default app;
