@@ -1,3 +1,4 @@
+/*
 import { IUser } from "../models/user.models.js";
 
 declare global {
@@ -7,3 +8,18 @@ declare global {
     }
   }
 }
+
+export {}; // ✅ this line is missing - add it
+*/
+
+import { IUser } from "../models/user.models.js";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser;
+    }
+  }
+}
+
+export {};

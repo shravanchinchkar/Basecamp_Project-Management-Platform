@@ -142,4 +142,39 @@ const login = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, login };
+const logout = asyncHandler(async (req, res) => {
+  /*
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: "",
+      },
+    },
+    {
+      new: true,
+    },
+  );
+  */
+
+  await User.findOneAndUpdate(
+    { email: (req as any).user?.email }, // ✅ cast to any
+    {
+      $unset: {
+        refreshToken: 1, // ✅ $unset is cleaner than $set: ""
+      },
+    },
+    { new: true },
+  );
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User loggout successfully"));
+});
+
+export { registerUser, login, logout };

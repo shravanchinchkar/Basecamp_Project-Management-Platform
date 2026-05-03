@@ -2,11 +2,10 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "esnext", // ✅ ESM
-    "moduleResolution": "bundler",
+    "module": "nodenext",           // ✅ changed from esnext
+    "moduleResolution": "nodenext", // ✅ changed from bundler
     "target": "esnext",
-    "types": ["node"],
-    "typeRoots": ["./src/types", "./node_modules/@types"], // ✅ add this
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,

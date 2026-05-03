@@ -13,20 +13,11 @@ export const validate = (
     return next();
   }
 
-  const extractedErrors: any = [];
+  const extractedErrors: { [key: string]: string }[] = [];
   errors
     .array()
     .map((error: any) => extractedErrors.push({ [error.path]: error.msg }));
 
-  throw new ApiError(422, "Received error is not valid", extractedErrors);
-
-  //   if (!errors.isEmpty()) {
-  //     const errorMessages = errors
-  //       .array()
-  //       .map((error) => error.msg)
-  //       .join(", ");
-  //     return next(new ApiError(400, errorMessages));
-  //   }
-
-  //   next();
+  // ✅ Use next(error) instead of throw in regular middleware
+  return next(new ApiError(422, "Received data is not valid", extractedErrors));
 };
