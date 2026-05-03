@@ -4,19 +4,37 @@ import { ApiResponse } from "../utils/api-response.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { emailVerificationMailGenContent, sendEmail } from "../utils/mail.js";
 
+// const generateAcessandRefreshToken = async (userId: string) => {
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) throw new ApiError(404, "User not found"); // ← null check
+
+//     const accessToken = user.generateAccessToken();
+//     const refreshToken = user.generateRefereshToken();
+
+//     user.refreshToken = refreshToken; // ← remove ?. on left side of assignment
+//     await user.save({ validateBeforeSave: false });
+
+//     return { accessToken, refreshToken };
+//   } catch (error) {
+//     throw new ApiError(500, "Something went wrong while generating the tokens");
+//   }
+// };
+
 const generateAcessandRefreshToken = async (userId: string) => {
   try {
     const user = await User.findById(userId);
-    if (!user) throw new ApiError(404, "User not found"); // ← null check
+    if (!user) throw new ApiError(404, "User not found");
 
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefereshToken();
 
-    user.refreshToken = refreshToken; // ← remove ?. on left side of assignment
+    user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.log("TOKEN GEN ERROR:", error); // ← add this
     throw new ApiError(500, "Something went wrong while generating the tokens");
   }
 };

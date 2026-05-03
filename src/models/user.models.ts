@@ -24,10 +24,10 @@ export interface IUser extends Document {
   generateAccessToken(): string;
   generateRefereshToken(): string;
   generateTemperoryToken(): {
-  unHashedToken: string;
-  hashToken: string;
-  tokenExpiry: Date; // ← change number to Date
-};
+    unHashedToken: string;
+    hashToken: string;
+    tokenExpiry: Date; // ← change number to Date
+  };
 }
 
 // 1. Define an interface for the User document
@@ -125,15 +125,15 @@ userSchema.methods.generateAccessToken = function () {
 
 userSchema.methods.generateRefereshToken = function () {
   const options: SignOptions = {
-    expiresIn: (process.env.REFERESH_TOKEN_EXPIRY ||
-      "1d") as SignOptions["expiresIn"],
+    expiresIn: (process.env.REFRESH_TOKEN_EXPIRY || // ✅ REFRESH not REFERESH
+      "10d") as SignOptions["expiresIn"],
   };
 
   return jwt.sign(
     {
       _id: this._id,
     },
-    process.env.REFERESH_TOKEN_SECRET!,
+    process.env.REFRESH_TOKEN_SECRET!, // ✅ REFRESH not REFERESH
     options,
   );
 };
