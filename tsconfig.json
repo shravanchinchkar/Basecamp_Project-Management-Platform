@@ -6,6 +6,7 @@
     "moduleResolution": "bundler",
     "target": "esnext",
     "types": ["node"],
+    "typeRoots": ["./src/types", "./node_modules/@types"], // ✅ add this
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
